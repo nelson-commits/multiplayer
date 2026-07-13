@@ -6,6 +6,8 @@
 <title>Shule AI Plus — Science Lab Challenge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <style>
   :root{
     --paper:#EAF4E7;
@@ -440,8 +442,13 @@
         <span class="tag">CBC Science Lab · Grade 8-9</span>
       </div>
     </div>
-    <div class="conn-dot"><span class="dot"></span><span id="connLabel">ready</span></div>
+    <div class="conn-dot"><span class="dot" id="connDot"></span><span id="connLabel">ready</span></div>
   </header>
+
+  <div id="storageBanner" style="display:none;background:#FDEEEA;border:1px solid #f3c3b4;color:#a13b23;padding:12px 14px;border-radius:10px;font-size:0.82rem;line-height:1.5;margin-bottom:16px;">
+    <b style="display:block;font-family:'Space Grotesk',sans-serif;margin-bottom:3px;">Not connected to the online database</b>
+    Open this file's &lt;script&gt; section and paste your Firebase project's <code>apiKey</code>, <code>databaseURL</code>, and <code>projectId</code> into the <code>firebaseConfig</code> object near the top. See the setup steps below.
+  </div>
 
   <!-- JOIN SCREEN -->
   <section id="screen-join" class="screen active">
@@ -581,6 +588,29 @@
     }
   };
 
+  /* ---------- Firebase config — PASTE YOUR OWN PROJECT VALUES HERE ---------- */
+  var firebaseConfig = {
+    apiKey: "YOUR_API_KEY_HERE",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID_HERE"
+  };
+
+  var FIREBASE_CONFIGURED = firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('YOUR_') !== 0;
+  var db = null;
+  if (FIREBASE_CONFIGURED){
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+  }
+  var STORAGE_OK = FIREBASE_CONFIGURED;
+
+  function showStorageWarning(){
+    var b = document.getElementById('storageBanner');
+    if (b) b.style.display = 'block';
+    var dot = document.getElementById('connDot');
+    if (dot) dot.style.background = '#FF6B4A';
+    setConn('offline');
+  }
+
   /* ---------- Small helpers ---------- */
   function $(id){ return document.getElementById(id); }
   function show(screenId){
@@ -594,17 +624,22 @@
   }
   function normCode(v){ return (v||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10); }
 
+  function fbPath(key){ return 'data/' + key.replace(/:/g, '/'); }
+
   async function safeGet(key, shared){
+    if (!STORAGE_OK){ showStorageWarning(); return null; }
     try{
-      var res = await window.storage.get(key, shared);
-      return res ? res.value : null;
-    }catch(e){ return null; }
+      var snap = await db.ref(fbPath(key)).once('value');
+      var val = snap.val();
+      return (val === null || val === undefined) ? null : val;
+    }catch(e){ console.error('storage get failed:', e); return null; }
   }
   async function safeSet(key, value, shared){
+    if (!STORAGE_OK){ showStorageWarning(); return false; }
     try{
-      await window.storage.set(key, value, shared);
+      await db.ref(fbPath(key)).set(value);
       return true;
-    }catch(e){ return false; }
+    }catch(e){ console.error('storage set failed:', e); return false; }
   }
 
   /* ---------- Avatar picker ---------- */
@@ -779,8 +814,17 @@
   }
 
   async function handleStart(){
+    if (!STORAGE_OK){ showStorageWarning(); return; }
+    var startBtn = $('startBtn');
+    startBtn.disabled = true;
+    startBtn.textContent = 'Starting…';
     var room = await loadRoom(state.code);
-    if (!room) return;
+    if (!room){
+      startBtn.disabled = false;
+      startBtn.textContent = 'Start the challenge 🔬';
+      alert("Couldn't reach the online database. Check your internet connection and that your Firebase config is correct, then try again.");
+      return;
+    }
     room.status = 'playing';
     room.startedAt = Date.now();
     Object.keys(room.players).forEach(function(pid){
@@ -985,6 +1029,7 @@
   }
 
   /* ---------- Wire up ---------- */
+  if (!STORAGE_OK) showStorageWarning();
   renderAvatarGrid();
   renderGlobalBoard();
 
