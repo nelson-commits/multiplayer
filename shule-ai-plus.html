@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shule AI Plus — Science Lab Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAF4E7;
+    --paper-line:#cfe6c9;
+    --ink:#12231F;
+    --forest:#1B4332;
+    --forest-dark:#0F2E23;
+    --highlighter:#F4E04D;
+    --coral:#FF6B4A;
+    --sky:#2D9CDB;
+    --card:#FFFFFF;
+    --muted:#5C7568;
+    --radius:14px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  html,body{
+    background:
+      linear-gradient(var(--paper-line) 1px, transparent 1px) 0 0/100% 28px,
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    min-height:100vh;
+  }
+  .mono{font-family:'Space Mono',monospace;}
+  .display{font-family:'Space Grotesk',system-ui,sans-serif;}
+
+  .app{
+    max-width:640px;
+    margin:0 auto;
+    padding:22px 18px 60px;
+    min-height:100vh;
+  }
+
+  header.brand{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .brand-mark{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-mark .flask{
+    width:36px;height:36px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--forest);
+    border-radius:10px;
+    font-size:18px;
+    box-shadow:3px 3px 0 var(--highlighter);
+  }
+  .brand-mark h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.15rem;
+    margin:0;
+    letter-spacing:-0.01em;
+    line-height:1.1;
+  }
+  .brand-mark span.tag{
+    display:block;
+    font-size:0.66rem;
+    color:var(--muted);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    font-weight:600;
+    margin-top:1px;
+  }
+  .conn-dot{
+    display:flex;align-items:center;gap:6px;
+    font-size:0.7rem;
+    color:var(--muted);
+    font-family:'Space Mono',monospace;
+  }
+  .conn-dot .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#3ABE6E;
+    box-shadow:0 0 0 3px rgba(58,190,110,0.25);
+  }
+
+  .screen{display:none;animation:rise .35s ease both;}
+  .screen.active{display:block;}
+  @keyframes rise{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .card{
+    background:var(--card);
+    border-radius:var(--radius);
+    border:1px solid #DCEBD8;
+    box-shadow:0 2px 0 #DCEBD8;
+    padding:22px;
+  }
+
+  h2.title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.5rem;
+    margin:0 0 6px;
+  }
+  p.sub{
+    color:var(--muted);
+    margin:0 0 20px;
+    font-size:0.92rem;
+    line-height:1.5;
+  }
+
+  label.field-label{
+    display:block;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.07em;
+    font-weight:700;
+    color:var(--forest);
+    margin-bottom:6px;
+  }
+  input.text-input{
+    width:100%;
+    padding:13px 14px;
+    border-radius:10px;
+    border:2px solid #DCEBD8;
+    background:#F7FBF5;
+    font-size:1rem;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s;
+  }
+  input.text-input:focus{border-color:var(--sky);}
+
+  /* specimen tag code input */
+  .specimen-tag{
+    position:relative;
+    border:2px dashed var(--forest);
+    border-radius:10px;
+    padding:14px 16px 12px;
+    background:repeating-linear-gradient(135deg, #FBF9E9, #FBF9E9 8px, #F6F2D6 8px, #F6F2D6 16px);
+    margin-bottom:18px;
+  }
+  .specimen-tag::before{
+    content:'SPECIMEN — ACCESS CODE';
+    position:absolute;
+    top:-9px;left:14px;
+    background:var(--highlighter);
+    color:var(--ink);
+    font-family:'Space Mono',monospace;
+    font-size:0.6rem;
+    font-weight:700;
+    letter-spacing:0.06em;
+    padding:2px 8px;
+    border-radius:4px;
+  }
+  .specimen-tag input{
+    width:100%;
+    background:transparent;
+    border:none;
+    outline:none;
+    font-family:'Space Mono',monospace;
+    font-size:1.6rem;
+    font-weight:700;
+    letter-spacing:0.14em;
+    color:var(--forest-dark);
+    text-transform:uppercase;
+    padding:6px 2px 2px;
+  }
+  .specimen-tag .hint{
+    font-size:0.68rem;
+    color:var(--muted);
+    margin-top:2px;
+  }
+
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;}
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:none;
+    border-radius:10px;
+    padding:13px 18px;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    cursor:pointer;
+    transition:transform .1s ease, box-shadow .1s ease;
+  }
+  .btn:active{transform:translateY(2px);}
+  .btn-primary{
+    background:var(--forest);
+    color:#fff;
+    box-shadow:0 3px 0 var(--forest-dark);
+    width:100%;
+  }
+  .btn-primary:active{box-shadow:0 1px 0 var(--forest-dark);}
+  .btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--forest);
+    border:2px solid #DCEBD8;
+  }
+  .btn-coral{
+    background:var(--coral);
+    color:#fff;
+    box-shadow:0 3px 0 #C94E32;
+    width:100%;
+  }
+  .btn-coral:active{box-shadow:0 1px 0 #C94E32;}
+
+  .avatar-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+    margin-bottom:18px;
+  }
+  .avatar-opt{
+    aspect-ratio:1;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.3rem;
+    background:#F7FBF5;
+    border:2px solid #DCEBD8;
+    border-radius:10px;
+    cursor:pointer;
+  }
+  .avatar-opt.selected{
+    border-color:var(--sky);
+    background:#E7F4FC;
+    transform:scale(1.05);
+  }
+
+  .error-msg{
+    color:#C94E32;
+    font-size:0.82rem;
+    margin:-10px 0 14px;
+    font-weight:600;
+    display:none;
+  }
+
+  /* lobby */
+  .lobby-code{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--forest);
+    color:#fff;
+    padding:14px 16px;
+    border-radius:10px;
+    margin-bottom:18px;
+  }
+  .lobby-code .code-val{
+    font-family:'Space Mono',monospace;
+    font-size:1.4rem;
+    font-weight:700;
+    letter-spacing:0.12em;
+  }
+  .lobby-code .code-label{
+    font-size:0.62rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    opacity:0.8;
+    margin-bottom:2px;
+  }
+  .copy-btn{
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(255,255,255,0.3);
+    color:#fff;
+    padding:7px 11px;
+    border-radius:7px;
+    font-size:0.72rem;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+  }
+
+  .player-list{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .player-row{
+    display:flex;align-items:center;gap:10px;
+    background:#F7FBF5;
+    border:1px solid #DCEBD8;
+    border-radius:10px;
+    padding:10px 12px;
+  }
+  .player-row .av{
+    width:34px;height:34px;border-radius:8px;
+    background:#fff;border:1px solid #DCEBD8;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.05rem;
+  }
+  .player-row .name{font-weight:600;font-size:0.9rem;flex:1;}
+  .player-row .status-chip{
+    font-size:0.62rem;
+    font-family:'Space Mono',monospace;
+    text-transform:uppercase;
+    padding:3px 8px;
+    border-radius:20px;
+    background:#E7F4FC;
+    color:var(--sky);
+    font-weight:700;
+  }
+  .player-row .status-chip.done{background:#E9F7ED;color:#3ABE6E;}
+
+  .waiting-note{
+    display:flex;align-items:center;gap:8px;
+    font-size:0.8rem;color:var(--muted);
+    margin-bottom:16px;
+  }
+  .pulse{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--sky);
+    animation:pulse 1.4s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+  /* quiz */
+  .quiz-topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    margin-bottom:14px;
+  }
+  .progress-track{
+    height:6px;background:#DCEBD8;border-radius:4px;overflow:hidden;flex:1;margin:0 12px;
+  }
+  .progress-fill{height:100%;background:var(--sky);border-radius:4px;transition:width .3s ease;}
+  .qnum{font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--muted);white-space:nowrap;}
+  .timer{
+    font-family:'Space Mono',monospace;font-weight:700;font-size:0.85rem;
+    color:var(--coral);white-space:nowrap;
+  }
+  .diff-chip{
+    display:inline-block;
+    font-size:0.6rem;
+    font-family:'Space Mono',monospace;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    background:var(--highlighter);
+    color:var(--ink);
+    padding:3px 9px;
+    border-radius:20px;
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .q-text{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.2rem;
+    line-height:1.35;
+    margin:0 0 18px;
+  }
+  .opt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:6px;}
+  .opt{
+    text-align:left;
+    padding:13px 14px;
+    border-radius:10px;
+    border:2px solid #DCEBD8;
+    background:#F7FBF5;
+    font-family:'Inter',sans-serif;
+    font-size:0.92rem;
+    font-weight:500;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .opt .letter{
+    width:24px;height:24px;border-radius:6px;
+    background:#fff;border:1px solid #DCEBD8;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;
+    flex-shrink:0;
+  }
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:#3ABE6E;background:#E9F7ED;}
+  .opt.correct .letter{background:#3ABE6E;color:#fff;border-color:#3ABE6E;}
+  .opt.wrong{border-color:var(--coral);background:#FDEEEA;}
+  .opt.wrong .letter{background:var(--coral);color:#fff;border-color:var(--coral);}
+  .opt.dim{opacity:0.5;}
+
+  .feedback-box{
+    margin-top:14px;
+    padding:13px 14px;
+    border-radius:10px;
+    font-size:0.85rem;
+    line-height:1.5;
+    display:none;
+  }
+  .feedback-box.correct{background:#E9F7ED;color:#1e6b3d;}
+  .feedback-box.wrong{background:#FDEEEA;color:#a13b23;}
+  .feedback-box b{display:block;font-family:'Space Grotesk',sans-serif;font-size:0.9rem;margin-bottom:3px;}
+
+  /* results */
+  .board-list{list-style:none;margin:0 0 20px;padding:0;display:flex;flex-direction:column;gap:8px;}
+  .board-row{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 14px;
+    border-radius:10px;
+    background:#F7FBF5;
+    border:1px solid #DCEBD8;
+  }
+  .board-row.me{border-color:var(--sky);background:#E7F4FC;}
+  .board-row .rank{
+    font-family:'Space Mono',monospace;font-weight:700;
+    width:26px;text-align:center;color:var(--muted);
+  }
+  .board-row.top1 .rank{color:#D4A017;}
+  .board-row.top2 .rank{color:#9AA5B1;}
+  .board-row.top3 .rank{color:#C08552;}
+  .board-row .av{
+    width:32px;height:32px;border-radius:8px;background:#fff;
+    border:1px solid #DCEBD8;display:flex;align-items:center;justify-content:center;font-size:1rem;
+  }
+  .board-row .nm{flex:1;font-weight:600;font-size:0.88rem;}
+  .board-row .sc{font-family:'Space Mono',monospace;font-weight:700;font-size:0.92rem;color:var(--forest);}
+  .board-row .st{font-size:0.62rem;color:var(--muted);font-family:'Space Mono',monospace;}
+
+  .section-label{
+    font-size:0.68rem;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--muted);font-weight:700;margin:22px 0 10px;
+  }
+
+  footer.note{
+    text-align:center;
+    font-size:0.72rem;
+    color:var(--muted);
+    margin-top:26px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="brand">
+    <div class="brand-mark">
+      <div class="flask">🧪</div>
+      <div>
+        <h1>Shule AI Plus</h1>
+        <span class="tag">CBC Science Lab · Grade 8-9</span>
+      </div>
+    </div>
+    <div class="conn-dot"><span class="dot"></span><span id="connLabel">ready</span></div>
+  </header>
+
+  <!-- JOIN SCREEN -->
+  <section id="screen-join" class="screen active">
+    <div class="card">
+      <h2 class="title">Join a lab session</h2>
+      <p class="sub">Enter your name, pick a specimen, and key in the access code your teammate shared. Everyone on the same code plays together — even from a different device.</p>
+
+      <label class="field-label">Your name</label>
+      <input class="text-input" id="nameInput" maxlength="14" placeholder="e.g. Amani" style="margin-bottom:16px;">
+
+      <label class="field-label">Pick your specimen</label>
+      <div class="avatar-grid" id="avatarGrid"></div>
+
+      <div class="specimen-tag">
+        <input id="codeInput" class="mono" maxlength="10" autocomplete="off" spellcheck="false" value="DEMO021">
+        <div class="hint">Same code = same game. Share it so friends can jump in.</div>
+      </div>
+
+      <div class="error-msg" id="joinError"></div>
+
+      <button class="btn btn-primary" id="joinBtn">Enter the lab →</button>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn btn-ghost" id="newCodeBtn" style="font-size:0.8rem;">🎲 Start a fresh code instead</button>
+      </div>
+    </div>
+
+    <div class="section-label">All-time top scientists</div>
+    <div class="card" id="globalBoardCard">
+      <div id="globalBoardList" style="font-size:0.85rem;color:var(--muted);">Loading leaderboard…</div>
+    </div>
+  </section>
+
+  <!-- LOBBY SCREEN -->
+  <section id="screen-lobby" class="screen">
+    <div class="card">
+      <div class="lobby-code">
+        <div>
+          <div class="code-label">Access code</div>
+          <div class="code-val mono" id="lobbyCode">—</div>
+        </div>
+        <button class="copy-btn" id="copyCodeBtn">Copy code</button>
+      </div>
+
+      <h2 class="title" style="font-size:1.15rem;">Who's in the lab</h2>
+      <ul class="player-list" id="lobbyPlayerList"></ul>
+
+      <div class="waiting-note"><span class="pulse"></span> Waiting for players — anyone can start when ready.</div>
+
+      <button class="btn btn-primary" id="startBtn">Start the challenge 🔬</button>
+    </div>
+  </section>
+
+  <!-- QUIZ SCREEN -->
+  <section id="screen-quiz" class="screen">
+    <div class="card">
+      <div class="quiz-topbar">
+        <span class="qnum" id="qnumLabel">Q1 / 12</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+        <span class="timer" id="timerLabel">15s</span>
+      </div>
+
+      <div class="diff-chip" id="diffChip">LEVEL 1</div>
+      <p class="q-text" id="qText">Question text</p>
+      <div class="opt-list" id="optList"></div>
+
+      <div class="feedback-box" id="feedbackBox">
+        <b id="feedbackTitle"></b>
+        <span id="feedbackBody"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTS / LEADERBOARD SCREEN -->
+  <section id="screen-results" class="screen">
+    <div class="card">
+      <h2 class="title" id="resultsTitle">Lab results</h2>
+      <p class="sub" id="resultsSub">Live leaderboard for this session — updates as friends finish.</p>
+      <ul class="board-list" id="roomBoardList"></ul>
+      <button class="btn btn-coral" id="playAgainBtn">Reset this room &amp; play again</button>
+      <button class="btn btn-ghost" id="leaveBtn" style="width:100%;margin-top:10px;">Leave to home</button>
+    </div>
+  </section>
+
+  <footer class="note">Shule AI Plus adapts question difficulty to how each scientist is performing. Built for CBC Integrated Science, age 14.</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Data: CBC Grade 8/9 Integrated Science question bank ---------- */
+  var QUESTIONS = [
+    {id:'q1', topic:'Matter', diff:1, text:"What is it called when a liquid turns into a gas at its surface, without reaching boiling point?", options:["Evaporation","Condensation","Sublimation","Melting"], correct:0,
+      explain:"Evaporation happens at the surface of a liquid, at any temperature — that's why a puddle dries up without boiling."},
+    {id:'q2', topic:'Cell biology', diff:1, text:"Which part of a cell controls its activities, a bit like a control room?", options:["Cell membrane","Nucleus","Cytoplasm","Cell wall"], correct:1,
+      explain:"The nucleus holds the cell's genetic material and directs growth, repair and reproduction."},
+    {id:'q3', topic:'Mixtures', diff:2, text:"You have a mixture of iron filings and sand. What's the quickest way to separate them?", options:["Filtration","Evaporation","Using a magnet","Decanting"], correct:2,
+      explain:"Iron is magnetic and sand isn't, so a magnet pulls the iron filings straight out."},
+    {id:'q4', topic:'Photosynthesis', diff:1, text:"Which gas do plants take in from the air to make food during photosynthesis?", options:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"], correct:2,
+      explain:"Plants absorb carbon dioxide through tiny pores called stomata and combine it with water, using light energy, to make glucose."},
+    {id:'q5', topic:'Simple machines', diff:2, text:"A see-saw at the playground is an example of which simple machine?", options:["Pulley","Wheel and axle","Lever","Inclined plane"], correct:2,
+      explain:"A see-saw pivots on a fixed point (fulcrum) — that's the definition of a lever."},
+    {id:'q6', topic:'Acids & bases', diff:2, text:"On the pH scale, what value shows a solution is exactly neutral?", options:["0","7","10","14"], correct:1,
+      explain:"pH 7 is neutral — below 7 is acidic, above 7 is basic (alkaline)."},
+    {id:'q7', topic:'Electricity', diff:3, text:"Electric current flows easily through which of these materials?", options:["Rubber","Copper wire","Dry wood","Plastic"], correct:1,
+      explain:"Copper is a good conductor because its electrons move freely — that's why it's used in electrical wiring."},
+    {id:'q8', topic:'Human body', diff:2, text:"Which organ pumps blood around the whole body?", options:["Lungs","Liver","Heart","Kidney"], correct:2,
+      explain:"The heart is a muscular pump that pushes blood through blood vessels to every part of the body."},
+    {id:'q9', topic:'Forces', diff:3, text:"Which force pulls every object toward the centre of the Earth?", options:["Friction","Gravity","Magnetism","Tension"], correct:1,
+      explain:"Gravity is the force of attraction between the Earth and any object with mass — it's what gives things weight."},
+    {id:'q10', topic:'Energy', diff:1, text:"Which of these is a renewable source of energy?", options:["Coal","Petroleum","Solar","Natural gas"], correct:2,
+      explain:"Sunlight keeps arriving every day, so solar energy can be used again and again without running out."},
+    {id:'q11', topic:'Forces', diff:3, text:"What is the SI (standard) unit used to measure force?", options:["Joule","Newton","Watt","Pascal"], correct:1,
+      explain:"Force is measured in newtons (N), named after Sir Isaac Newton."},
+    {id:'q12', topic:'Ecosystems', diff:2, text:"What is the process called where water moves from soil, through a plant, and out into the air?", options:["Transpiration","Respiration","Germination","Precipitation"], correct:0,
+      explain:"Transpiration is water loss from leaves as vapour — it's how plants 'sweat' and help drive water up from the roots."}
+  ];
+
+  var AVATARS = ['🧪','🔬','🌱','⚡','🧫','🪱','🦠','🌡️','🧬','🪐','🔭','🐸'];
+
+  /* ---------- State ---------- */
+  var state = {
+    playerId: null,
+    name: '',
+    avatar: AVATARS[0],
+    code: '',
+    pollTimer: null,
+    quiz: {
+      order: [],
+      index: 0,
+      score: 0,
+      streak: 0,
+      answered: false,
+      qStart: 0,
+      tickTimer: null,
+      timeLeft: 15
+    }
+  };
+
+  /* ---------- Small helpers ---------- */
+  function $(id){ return document.getElementById(id); }
+  function show(screenId){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    $(screenId).classList.add('active');
+  }
+  function setConn(text){ $('connLabel').textContent = text; }
+  function uid(){
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID().slice(0,8);
+    return 'p' + Math.random().toString(36).slice(2,10);
+  }
+  function normCode(v){ return (v||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10); }
+
+  async function safeGet(key, shared){
+    try{
+      var res = await window.storage.get(key, shared);
+      return res ? res.value : null;
+    }catch(e){ return null; }
+  }
+  async function safeSet(key, value, shared){
+    try{
+      await window.storage.set(key, value, shared);
+      return true;
+    }catch(e){ return false; }
+  }
+
+  /* ---------- Avatar picker ---------- */
+  function renderAvatarGrid(){
+    var grid = $('avatarGrid');
+    grid.innerHTML = '';
+    AVATARS.forEach(function(a, i){
+      var d = document.createElement('div');
+      d.className = 'avatar-opt' + (a === state.avatar ? ' selected' : '');
+      d.textContent = a;
+      d.addEventListener('click', function(){
+        state.avatar = a;
+        renderAvatarGrid();
+      });
+      grid.appendChild(d);
+    });
+  }
+
+  /* ---------- Room helpers ---------- */
+  function roomKey(code){ return 'room:' + code; }
+
+  async function loadRoom(code){
+    var raw = await safeGet(roomKey(code), true);
+    if (!raw) return null;
+    try{ return JSON.parse(raw); }catch(e){ return null; }
+  }
+  async function saveRoom(code, roomObj){
+    return safeSet(roomKey(code), JSON.stringify(roomObj), true);
+  }
+
+  function freshRoom(code){
+    return { code: code, status: 'lobby', createdAt: Date.now(), players: {} };
+  }
+
+  /* ---------- Global leaderboard ---------- */
+  async function loadGlobalBoard(){
+    var raw = await safeGet('global:leaderboard', true);
+    if (!raw) return [];
+    try{ var arr = JSON.parse(raw); return Array.isArray(arr) ? arr : []; }catch(e){ return []; }
+  }
+  async function submitToGlobalBoard(entry){
+    var arr = await loadGlobalBoard();
+    arr.push(entry);
+    arr.sort(function(a,b){ return b.score - a.score; });
+    arr = arr.slice(0, 15);
+    await safeSet('global:leaderboard', JSON.stringify(arr), true);
+    return arr;
+  }
+  async function renderGlobalBoard(){
+    var arr = await loadGlobalBoard();
+    var el = $('globalBoardList');
+    if (!arr.length){
+      el.innerHTML = '<span style="color:var(--muted);">No scores yet — be the first scientist on the board!</span>';
+      return;
+    }
+    var html = '<ul class="board-list" style="margin:0;">';
+    arr.slice(0,5).forEach(function(e, i){
+      html += '<li class="board-row' + (i===0?' top1':i===1?' top2':i===2?' top3':'') + '">' +
+        '<span class="rank">' + (i+1) + '</span>' +
+        '<span class="av">' + (e.avatar||'🧪') + '</span>' +
+        '<span class="nm">' + escapeHtml(e.name) + '</span>' +
+        '<span class="sc">' + e.score + '</span></li>';
+    });
+    html += '</ul>';
+    el.innerHTML = html;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  /* ---------- Join flow ---------- */
+  async function handleJoin(){
+    var name = $('nameInput').value.trim();
+    var code = normCode($('codeInput').value);
+    var errEl = $('joinError');
+    errEl.style.display = 'none';
+
+    if (!name){
+      errEl.textContent = 'Type your name so friends know it\'s you.';
+      errEl.style.display = 'block';
+      return;
+    }
+    if (!code || code.length < 4){
+      errEl.textContent = 'Access code needs to be at least 4 characters.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    $('joinBtn').disabled = true;
+    $('joinBtn').textContent = 'Connecting…';
+    setConn('joining');
+
+    state.name = name;
+    state.code = code;
+    state.playerId = uid();
+
+    var room = await loadRoom(code);
+    if (!room){
+      room = freshRoom(code);
+    }
+    if (room.status === 'playing' && !room.players[state.playerId]){
+      // room already mid-game and this is a brand new player — let them join the next round in lobby view of scores
+    }
+    room.players[state.playerId] = {
+      name: state.name,
+      avatar: state.avatar,
+      score: 0,
+      progress: 0,
+      finished: false,
+      joinedAt: Date.now()
+    };
+    await saveRoom(code, room);
+
+    $('joinBtn').disabled = false;
+    $('joinBtn').textContent = 'Enter the lab →';
+    setConn('connected');
+
+    if (room.status === 'playing'){
+      enterQuiz();
+    } else {
+      enterLobby();
+    }
+  }
+
+  function generateCode(){
+    var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    var c = '';
+    for (var i=0;i<6;i++) c += chars[Math.floor(Math.random()*chars.length)];
+    return c;
+  }
+
+  /* ---------- Lobby ---------- */
+  function enterLobby(){
+    show('screen-lobby');
+    $('lobbyCode').textContent = state.code;
+    stopPolling();
+    pollLobby();
+    state.pollTimer = setInterval(pollLobby, 2200);
+  }
+
+  async function pollLobby(){
+    var room = await loadRoom(state.code);
+    if (!room) return;
+    if (room.status === 'playing'){
+      enterQuiz();
+      return;
+    }
+    if (room.status === 'results'){
+      enterResults();
+      return;
+    }
+    renderLobbyPlayers(room);
+  }
+
+  function renderLobbyPlayers(room){
+    var list = $('lobbyPlayerList');
+    list.innerHTML = '';
+    var ids = Object.keys(room.players);
+    ids.sort(function(a,b){ return room.players[a].joinedAt - room.players[b].joinedAt; });
+    ids.forEach(function(pid){
+      var p = room.players[pid];
+      var li = document.createElement('li');
+      li.className = 'player-row';
+      li.innerHTML = '<span class="av">' + p.avatar + '</span>' +
+        '<span class="name">' + escapeHtml(p.name) + (pid === state.playerId ? ' (you)' : '') + '</span>' +
+        '<span class="status-chip">ready</span>';
+      list.appendChild(li);
+    });
+  }
+
+  async function handleStart(){
+    var room = await loadRoom(state.code);
+    if (!room) return;
+    room.status = 'playing';
+    room.startedAt = Date.now();
+    Object.keys(room.players).forEach(function(pid){
+      room.players[pid].score = 0;
+      room.players[pid].progress = 0;
+      room.players[pid].finished = false;
+    });
+    await saveRoom(state.code, room);
+    enterQuiz();
+  }
+
+  /* ---------- Quiz (adaptive engine) ---------- */
+  function buildAdaptiveOrder(){
+    // Shule AI: start at difficulty 1-2, then adapt based on rolling performance.
+    var byDiff = {1:[], 2:[], 3:[]};
+    QUESTIONS.forEach(function(q){ byDiff[q.diff].push(q); });
+    [1,2,3].forEach(function(d){ byDiff[d].sort(function(){ return Math.random()-0.5; }); });
+    return byDiff;
+  }
+
+  function enterQuiz(){
+    stopPolling();
+    show('screen-quiz');
+    state.quiz.pool = buildAdaptiveOrder();
+    state.quiz.used = [];
+    state.quiz.index = 0;
+    state.quiz.score = 0;
+    state.quiz.streak = 0;
+    state.quiz.currentDiff = 1;
+    state.quiz.total = QUESTIONS.length;
+    nextQuestion();
+    state.pollTimer = setInterval(watchRoomDuringQuiz, 3000);
+  }
+
+  async function watchRoomDuringQuiz(){
+    // keep our progress visible to others even mid-question
+    var room = await loadRoom(state.code);
+    if (!room || !room.players[state.playerId]) return;
+    room.players[state.playerId].progress = state.quiz.index;
+    await saveRoom(state.code, room);
+  }
+
+  function pickNextQuestion(){
+    var pool = state.quiz.pool;
+    var d = state.quiz.currentDiff;
+    var order = [d, d===1?2:d===3?2:(state.quiz.streak>=2?3:1), 1,2,3];
+    for (var i=0;i<order.length;i++){
+      var arr = pool[order[i]];
+      if (arr && arr.length){ return arr.shift(); }
+    }
+    return null;
+  }
+
+  function nextQuestion(){
+    clearInterval(state.quiz.tickTimer);
+    state.quiz.index++;
+    if (state.quiz.index > state.quiz.total || state.quiz.index > QUESTIONS.length){
+      finishQuiz();
+      return;
+    }
+    var q = pickNextQuestion();
+    if (!q){ finishQuiz(); return; }
+    state.quiz.current = q;
+    state.quiz.answered = false;
+    state.quiz.timeLeft = 15;
+    state.quiz.qStart = Date.now();
+
+    $('qnumLabel').textContent = 'Q' + state.quiz.index + ' / ' + state.quiz.total;
+    $('progressFill').style.width = Math.round(((state.quiz.index-1)/state.quiz.total)*100) + '%';
+    $('diffChip').textContent = 'LEVEL ' + q.diff + ' · ' + q.topic.toUpperCase();
+    $('qText').textContent = q.text;
+    $('feedbackBox').style.display = 'none';
+    $('feedbackBox').className = 'feedback-box';
+
+    var optList = $('optList');
+    optList.innerHTML = '';
+    var letters = ['A','B','C','D'];
+    q.options.forEach(function(opt, i){
+      var b = document.createElement('button');
+      b.className = 'opt';
+      b.innerHTML = '<span class="letter">' + letters[i] + '</span><span>' + escapeHtml(opt) + '</span>';
+      b.addEventListener('click', function(){ answerQuestion(i); });
+      optList.appendChild(b);
+    });
+
+    $('timerLabel').textContent = state.quiz.timeLeft + 's';
+    state.quiz.tickTimer = setInterval(function(){
+      state.quiz.timeLeft--;
+      $('timerLabel').textContent = Math.max(state.quiz.timeLeft,0) + 's';
+      if (state.quiz.timeLeft <= 0){
+        clearInterval(state.quiz.tickTimer);
+        if (!state.quiz.answered) answerQuestion(-1);
+      }
+    }, 1000);
+  }
+
+  function answerQuestion(choiceIdx){
+    if (state.quiz.answered) return;
+    state.quiz.answered = true;
+    clearInterval(state.quiz.tickTimer);
+
+    var q = state.quiz.current;
+    var correct = choiceIdx === q.correct;
+    var elapsed = (Date.now() - state.quiz.qStart) / 1000;
+    var speedBonus = correct ? Math.max(0, Math.round(5 - Math.min(elapsed,5))) : 0;
+    var points = correct ? (10 * q.diff) + speedBonus : 0;
+
+    state.quiz.score += points;
+    state.quiz.streak = correct ? state.quiz.streak + 1 : 0;
+    // Shule AI adapts next difficulty based on streak
+    if (state.quiz.streak >= 2 && state.quiz.currentDiff < 3) state.quiz.currentDiff++;
+    else if (!correct && state.quiz.currentDiff > 1) state.quiz.currentDiff--;
+
+    var opts = document.querySelectorAll('#optList .opt');
+    opts.forEach(function(b, i){
+      b.disabled = true;
+      if (i === q.correct) b.classList.add('correct');
+      else if (i === choiceIdx) b.classList.add('wrong');
+      else b.classList.add('dim');
+    });
+
+    var fb = $('feedbackBox');
+    fb.style.display = 'block';
+    fb.className = 'feedback-box ' + (correct ? 'correct' : 'wrong');
+    $('feedbackTitle').textContent = correct
+      ? ('Correct! +' + points + ' points')
+      : (choiceIdx === -1 ? "Time's up — here's why:" : "Not quite — here's why:");
+    $('feedbackBody').textContent = q.explain;
+
+    setTimeout(nextQuestion, 2200);
+  }
+
+  async function finishQuiz(){
+    show('screen-quiz'); // stays until room updates
+    clearInterval(state.pollTimer);
+
+    var room = await loadRoom(state.code);
+    if (room && room.players[state.playerId]){
+      room.players[state.playerId].score = state.quiz.score;
+      room.players[state.playerId].progress = state.quiz.total;
+      room.players[state.playerId].finished = true;
+      room.players[state.playerId].finishedAt = Date.now();
+      await saveRoom(state.code, room);
+    }
+
+    await submitToGlobalBoard({
+      name: state.name,
+      avatar: state.avatar,
+      score: state.quiz.score,
+      code: state.code,
+      date: Date.now()
+    });
+
+    enterResults();
+  }
+
+  /* ---------- Results / room leaderboard ---------- */
+  function enterResults(){
+    stopPolling();
+    show('screen-results');
+    $('resultsTitle').textContent = 'Your score: ' + state.quiz.score + ' pts';
+    pollResults();
+    state.pollTimer = setInterval(pollResults, 2200);
+  }
+
+  async function pollResults(){
+    var room = await loadRoom(state.code);
+    if (!room) return;
+    var list = $('roomBoardList');
+    var ids = Object.keys(room.players);
+    ids.sort(function(a,b){ return (room.players[b].score||0) - (room.players[a].score||0); });
+    list.innerHTML = '';
+    ids.forEach(function(pid, i){
+      var p = room.players[pid];
+      var li = document.createElement('li');
+      li.className = 'board-row' + (pid===state.playerId?' me':'') + (i===0?' top1':i===1?' top2':i===2?' top3':'');
+      var statusTxt = p.finished ? 'finished' : ('Q' + (p.progress||0) + '/' + QUESTIONS.length);
+      li.innerHTML = '<span class="rank">' + (i+1) + '</span>' +
+        '<span class="av">' + p.avatar + '</span>' +
+        '<div style="flex:1;"><div class="nm">' + escapeHtml(p.name) + (pid===state.playerId?' (you)':'') + '</div>' +
+        '<div class="st">' + statusTxt + '</div></div>' +
+        '<span class="sc">' + (p.score||0) + '</span>';
+      list.appendChild(li);
+    });
+  }
+
+  async function handlePlayAgain(){
+    var room = await loadRoom(state.code);
+    if (!room) return;
+    room.status = 'lobby';
+    Object.keys(room.players).forEach(function(pid){
+      room.players[pid].score = 0;
+      room.players[pid].progress = 0;
+      room.players[pid].finished = false;
+    });
+    await saveRoom(state.code, room);
+    enterLobby();
+  }
+
+  function stopPolling(){
+    if (state.pollTimer){ clearInterval(state.pollTimer); state.pollTimer = null; }
+  }
+
+  /* ---------- Wire up ---------- */
+  renderAvatarGrid();
+  renderGlobalBoard();
+
+  $('joinBtn').addEventListener('click', handleJoin);
+  $('newCodeBtn').addEventListener('click', function(){
+    $('codeInput').value = generateCode();
+  });
+  $('startBtn').addEventListener('click', handleStart);
+  $('copyCodeBtn').addEventListener('click', function(){
+    var txt = state.code;
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){
+        $('copyCodeBtn').textContent = 'Copied!';
+        setTimeout(function(){ $('copyCodeBtn').textContent = 'Copy code'; }, 1400);
+      }).catch(function(){});
+    }
+  });
+  $('playAgainBtn').addEventListener('click', handlePlayAgain);
+  $('leaveBtn').addEventListener('click', function(){
+    stopPolling();
+    show('screen-join');
+    renderGlobalBoard();
+  });
+
+  $('nameInput').addEventListener('keydown', function(e){ if (e.key==='Enter') handleJoin(); });
+  $('codeInput').addEventListener('keydown', function(e){ if (e.key==='Enter') handleJoin(); });
+
+})();
+</script>
+</body>
+</html>
